@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Requerimentos Administrativos Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        
+        /* Toggle Switch CSS */
+        .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
+        .toggle-checkbox { right: 0; z-index: 1; border-color: #e2e8f0; transition: all 0.3s; }
+        .toggle-label { width: 3rem; height: 1.5rem; background-color: #e2e8f0; border-radius: 9999px; transition: all 0.3s; }
+        .toggle-dot { top: 0.125rem; left: 0.125rem; width: 1.25rem; height: 1.25rem; background-color: white; border-radius: 50%; transition: all 0.3s; }
+        .toggle-checkbox:checked ~ .toggle-dot { transform: translateX(100%); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 z-10 shrink-0">
+        <div class="max-w-screen-2xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h1 class="text-xl font-bold text-slate-800">Requerimentos Pro</h1>
+            </div>
+            <div class="text-sm text-slate-500" id="dataAtual"></div>
+        </div>
+    </header>
+
+    <!-- Main Scrollable Area -->
+    <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+        <div class="max-w-screen-2xl mx-auto space-y-6">
+            
+            <!-- FORMULÁRIO DE CADASTRO -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                    <h2 class="text-lg font-semibold text-slate-800" id="formTitle">Novo Requerimento</h2>
+                </div>
+                
+                <div class="p-6">
+                    <form id="formReq" class="space-y-6">
+                        <!-- Linha 1: Dados Básicos -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Número do Req.</label>
+                                <input type="text" id="numero" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Cliente</label>
+                                <input type="text" id="cliente" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Meio de Envio</label>
+                                <select id="meioEnvio" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                                    <option value="" disabled selected>Selecione...</option>
+                                    <option value="E-mail">E-mail</option>
+                                    <option value="SEI">SEI</option>
+                                    <option value="e-SIC">e-SIC</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Fase Atual</label>
+                                <input type="text" id="fase" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <!-- Linha 2: Datas e Responsável -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Data de Protocolo</label>
+                                <input type="date" id="dataProtocolo" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Prazo Fatal</label>
+                                <input type="date" id="dataPrazo" required class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Responsável</label>
+                                <div class="flex gap-2">
+                                    <select id="responsavel" required class="flex-1 px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-white">
+                                        <option value="" disabled selected>Selecione...</option>
+                                        <!-- Preenchido via JS -->
+                                    </select>
+                                    <button type="button" onclick="abrirModalResp()" class="px-3 py-2 bg-slate-100 border border-slate-300 text-slate-700 rounded-md hover:bg-slate-200 transition-colors title='Novo Responsável'">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Linha 3: Toggles -->
+                        <div class="grid grid-cols-2 md:grid-cols-5 gap-4 pt-2">
+                            <!-- Prorrogado -->
+                            <div class="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-600 uppercase">Prorrogado?</span>
+                                <div class="relative inline-block w-12 align-middle select-none">
+                                    <input type="checkbox" id="prorrogado" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="prorrogado" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                                </div>
+                            </div>
+                            <!-- Diligenciado -->
+                            <div class="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-600 uppercase">Em Diligência?</span>
+                                <div class="relative inline-block w-12 align-middle select-none">
+                                    <input type="checkbox" id="diligenciado" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="diligenciado" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                                </div>
+                            </div>
+                            <!-- Apto Ação -->
+                            <div class="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-600 uppercase">Apto p/ Ação?</span>
+                                <div class="relative inline-block w-12 align-middle select-none">
+                                    <input type="checkbox" id="aptoAcao" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="aptoAcao" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                                </div>
+                            </div>
+                            <!-- Ação Ajuizada -->
+                            <div class="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-600 uppercase">Ação Ajuizada?</span>
+                                <div class="relative inline-block w-12 align-middle select-none">
+                                    <input type="checkbox" id="acaoAjuizada" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="acaoAjuizada" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                                </div>
+                            </div>
+                            <!-- Info Fornecidas -->
+                            <div class="flex flex-col gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                                <span class="text-xs font-semibold text-slate-600 uppercase">Infos Fornecidas?</span>
+                                <div class="relative inline-block w-12 align-middle select-none">
+                                    <input type="checkbox" id="temInfo" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                    <label for="temInfo" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalhes Infos -->
+                        <div id="boxInfo" class="hidden">
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Quais informações foram fornecidas?</label>
+                            <textarea id="textoInfo" rows="2" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"></textarea>
+                        </div>
+
+                        <!-- Botões Formulário -->
+                        <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                            <button type="button" id="btnCancelar" class="hidden px-5 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                                Cancelar Edição
+                            </button>
+                            <button type="submit" id="btnSalvar" class="px-5 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 shadow-sm transition-colors flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Salvar Requerimento
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- SEÇÃO DE FILTROS -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                <div class="flex items-center gap-2 mb-4">
+                    <svg class="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                    <h3 class="font-medium text-slate-800">Filtros Combinados</h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <select id="filtroResp" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50 focus:ring-1 focus:ring-blue-500 outline-none">
+                        <option value="">Todos os Responsáveis</option>
+                    </select>
+                    <input type="text" id="filtroFase" placeholder="Filtrar por Fase..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <input type="date" id="filtroPrazo" title="Filtrar por Prazo Fatal" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50 text-slate-600 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <select id="filtroEnvio" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50 focus:ring-1 focus:ring-blue-500 outline-none">
+                        <option value="">Todos os Meios de Envio</option>
+                        <option value="E-mail">E-mail</option>
+                        <option value="SEI">SEI</option>
+                        <option value="e-SIC">e-SIC</option>
+                    </select>
+                    <input type="text" id="filtroGeral" placeholder="Busca geral (ex: Cliente, Num)..." class="w-full px-3 py-2 text-sm border border-slate-300 rounded-md bg-slate-50 focus:ring-1 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="flex justify-end mt-3">
+                    <button id="btnLimparFiltros" class="text-sm text-blue-600 hover:text-blue-800 font-medium">Limpar Filtros</button>
+                </div>
+            </div>
+
+            <!-- TABELA DE RESULTADOS -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+                <div class="px-6 py-4 border-b border-slate-200 bg-slate-50/50 flex justify-between items-center">
+                    <h2 class="text-lg font-semibold text-slate-800">Registros</h2>
+                    <span id="contador" class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">0</span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
+                                <th class="p-4 font-medium">Requerimento / Cliente</th>
+                                <th class="p-4 font-medium">Fase / Envio / Resp.</th>
+                                <th class="p-4 font-medium">Datas</th>
+                                <th class="p-4 font-medium">Ações Judiciais</th>
+                                <th class="p-4 font-medium">Status Adm.</th>
+                                <th class="p-4 font-medium text-right">Gerenciar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaDados" class="divide-y divide-slate-100 text-sm text-slate-700">
+                            <!-- Injetado via JS -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Estado Vazio -->
+                    <div id="estadoVazio" class="hidden flex-col items-center justify-center p-12 text-slate-400">
+                        <svg class="w-16 h-16 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <p class="text-base font-medium">Nenhum requerimento encontrado.</p>
+                        <p class="text-sm">Cadastre um novo ou altere seus filtros.</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+
+    <!-- MODAL: NOVO RESPONSÁVEL -->
+    <div id="modalRespBg" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center transition-opacity">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden transform scale-95 transition-transform" id="modalRespCard">
+            <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-semibold text-slate-800">Novo Responsável</h3>
+                <button onclick="fecharModalResp()" class="text-slate-400 hover:text-slate-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            </div>
+            <div class="p-5">
+                <input type="text" id="novoRespNome" placeholder="Nome do Responsável" class="w-full px-3 py-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none" autocomplete="off">
+                <div class="mt-5 flex justify-end gap-2">
+                    <button onclick="fecharModalResp()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">Cancelar</button>
+                    <button onclick="salvarResponsavel()" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIRMAR EXCLUSÃO -->
+    <div id="modalDelBg" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden items-center justify-center transition-opacity">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden p-6 text-center">
+            <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Excluir Registro?</h3>
+            <p class="text-sm text-slate-500 mb-6">Esta ação não pode ser desfeita. O requerimento será apagado permanentemente.</p>
+            <div class="flex justify-center gap-3">
+                <button onclick="fecharModalDel()" class="px-4 py-2 text-sm font-medium text-slate-600 bg-slate-100 rounded-lg hover:bg-slate-200">Cancelar</button>
+                <button id="btnConfirmaExclusao" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">Sim, Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENSAGEM FLUTUANTE (Toast) -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 text-white px-4 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+        <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <span id="toastMsg" class="text-sm font-medium"></span>
+    </div>
+
+    <script>
+        // Configurações de Data no Header
+        const formatadorData = new Intl.DateTimeFormat('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('dataAtual').textContent = formatadorData.format(new Date());
+
+        // Variáveis Globais
+        let requerimentos = JSON.parse(localStorage.getItem('req_dados') || '[]');
+        let responsaveis = JSON.parse(localStorage.getItem('req_responsaveis') || '["Equipe Padrão"]');
+        let editId = null;
+        let deleteId = null;
+
+        // Elementos DOM
+        const form = document.getElementById('formReq');
+        const boxInfo = document.getElementById('boxInfo');
+        const chkTemInfo = document.getElementById('temInfo');
+        const txtInfo = document.getElementById('textoInfo');
+        const selectRespForm = document.getElementById('responsavel');
+        const selectRespFiltro = document.getElementById('filtroResp');
+        const tabela = document.getElementById('tabelaDados');
+
+        // Lógica de UI - Mostrar Caixa de Informações
+        chkTemInfo.addEventListener('change', () => {
+            if(chkTemInfo.checked) {
+                boxInfo.classList.remove('hidden');
+                txtInfo.setAttribute('required', 'true');
+            } else {
+                boxInfo.classList.add('hidden');
+                txtInfo.removeAttribute('required');
+                txtInfo.value = '';
+            }
+        });
+
+        // Inicialização
+        function init() {
+            renderResponsaveis();
+            aplicarFiltros(); // Renderiza a tabela baseada nos filtros (iniciais = todos)
+        }
+
+        // ================= RENDERIZAR RESPONSÁVEIS =================
+        function renderResponsaveis() {
+            // Guarda valor selecionado atual para não perder ao re-renderizar
+            const valForm = selectRespForm.value;
+            const valFiltro = selectRespFiltro.value;
+
+            let htmlForm = '<option value="" disabled selected>Selecione...</option>';
+            let htmlFiltro = '<option value="">Todos os Responsáveis</option>';
+
+            responsaveis.forEach(r => {
+                htmlForm += `<option value="${r}">${r}</option>`;
+                htmlFiltro += `<option value="${r}">${r}</option>`;
+            });
+
+            selectRespForm.innerHTML = htmlForm;
+            selectRespFiltro.innerHTML = htmlFiltro;
+
+            if(valForm && responsaveis.includes(valForm)) selectRespForm.value = valForm;
+            if(valFiltro && responsaveis.includes(valFiltro)) selectRespFiltro.value = valFiltro;
+        }
+
+        // ================= MODAIS =================
+        function abrirModalResp() {
+            document.getElementById('novoRespNome').value = '';
+            document.getElementById('modalRespBg').classList.remove('hidden');
+            document.getElementById('modalRespBg').classList.add('flex');
+            setTimeout(() => document.getElementById('modalRespCard').classList.remove('scale-95'), 10);
+            document.getElementById('novoRespNome').focus();
+        }
+
+        function fecharModalResp() {
+            document.getElementById('modalRespCard').classList.add('scale-95');
+            setTimeout(() => {
+                document.getElementById('modalRespBg').classList.add('hidden');
+                document.getElementById('modalRespBg').classList.remove('flex');
+            }, 150);
+        }
+
+        function salvarResponsavel() {
+            const nome = document.getElementById('novoRespNome').value.trim();
+            if(!nome) return;
+            if(!responsaveis.includes(nome)) {
+                responsaveis.push(nome);
+                localStorage.setItem('req_responsaveis', JSON.stringify(responsaveis));
+                renderResponsaveis();
+                selectRespForm.value = nome; // Auto-seleciona
+                mostrarToast('Responsável adicionado!');
+            }
+            fecharModalResp();
+        }
+
+        function abrirModalDel(id) {
+            deleteId = id;
+            document.getElementById('modalDelBg').classList.remove('hidden');
+            document.getElementById('modalDelBg').classList.add('flex');
+        }
+
+        function fecharModalDel() {
+            deleteId = null;
+            document.getElementById('modalDelBg').classList.add('hidden');
+            document.getElementById('modalDelBg').classList.remove('flex');
+        }
+
+        document.getElementById('btnConfirmaExclusao').addEventListener('click', () => {
+            if(deleteId) {
+                requerimentos = requerimentos.filter(r => r.id !== deleteId);
+                salvarDados();
+                aplicarFiltros();
+                mostrarToast('Registro excluído');
+                fecharModalDel();
+            }
+        });
+
+        function mostrarToast(msg) {
+            const t = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            t.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => { t.classList.add('translate-y-20', 'opacity-0'); }, 3000);
+        }
+
+        // ================= CRUD REQUERIMENTOS =================
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const req = {
+                id: editId || Date.now().toString(),
+                numero: document.getElementById('numero').value,
+                cliente: document.getElementById('cliente').value,
+                meioEnvio: document.getElementById('meioEnvio').value,
+                fase: document.getElementById('fase').value,
+                dataProtocolo: document.getElementById('dataProtocolo').value,
+                dataPrazo: document.getElementById('dataPrazo').value,
+                responsavel: selectRespForm.value,
+                prorrogado: document.getElementById('prorrogado').checked,
+                diligenciado: document.getElementById('diligenciado').checked,
+                aptoAcao: document.getElementById('aptoAcao').checked,
+                acaoAjuizada: document.getElementById('acaoAjuizada').checked,
+                temInfo: chkTemInfo.checked,
+                info: chkTemInfo.checked ? txtInfo.value : ''
+            };
+
+            if(editId) {
+                const idx = requerimentos.findIndex(r => r.id === editId);
+                if(idx > -1) requerimentos[idx] = req;
+                mostrarToast('Atualizado com sucesso!');
+            } else {
+                requerimentos.push(req);
+                mostrarToast('Salvo com sucesso!');
+            }
+
+            salvarDados();
+            cancelarEdicao();
+            aplicarFiltros();
+        });
+
+        function salvarDados() {
+            localStorage.setItem('req_dados', JSON.stringify(requerimentos));
+        }
+
+        window.editarReq = function(id) {
+            const req = requerimentos.find(r => r.id === id);
+            if(!req) return;
+
+            editId = req.id;
+            document.getElementById('formTitle').textContent = "Editar Requerimento";
+            document.getElementById('btnCancelar').classList.remove('hidden');
+            document.getElementById('btnSalvar').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Atualizar Requerimento';
+
+            document.getElementById('numero').value = req.numero;
+            document.getElementById('cliente').value = req.cliente;
+            document.getElementById('meioEnvio').value = req.meioEnvio;
+            document.getElementById('fase').value = req.fase;
+            document.getElementById('dataProtocolo').value = req.dataProtocolo;
+            document.getElementById('dataPrazo').value = req.dataPrazo;
+            selectRespForm.value = req.responsavel || '';
+            
+            document.getElementById('prorrogado').checked = req.prorrogado;
+            document.getElementById('diligenciado').checked = req.diligenciado;
+            document.getElementById('aptoAcao').checked = req.aptoAcao || false;
+            document.getElementById('acaoAjuizada').checked = req.acaoAjuizada || false;
+            
+            chkTemInfo.checked = req.temInfo;
+            if(req.temInfo) {
+                boxInfo.classList.remove('hidden');
+                txtInfo.value = req.info;
+                txtInfo.setAttribute('required', 'true');
+            } else {
+                boxInfo.classList.add('hidden');
+                txtInfo.value = '';
+                txtInfo.removeAttribute('required');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        document.getElementById('btnCancelar').addEventListener('click', cancelarEdicao);
+
+        function cancelarEdicao() {
+            form.reset();
+            editId = null;
+            document.getElementById('formTitle').textContent = "Novo Requerimento";
+            document.getElementById('btnCancelar').classList.add('hidden');
+            document.getElementById('btnSalvar').innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Salvar Requerimento';
+            chkTemInfo.dispatchEvent(new Event('change')); // reseta a caixa
+        }
+
+        // ================= FILTROS E TABELA =================
+        const inputsFiltro = [selectRespFiltro, document.getElementById('filtroFase'), document.getElementById('filtroPrazo'), document.getElementById('filtroEnvio'), document.getElementById('filtroGeral')];
+        inputsFiltro.forEach(input => input.addEventListener('input', aplicarFiltros));
+        
+        document.getElementById('btnLimparFiltros').addEventListener('click', () => {
+            inputsFiltro.forEach(i => i.value = '');
+            aplicarFiltros();
+        });
+
+        function formatarDataBR(dataIso) {
+            if(!dataIso) return '--/--/----';
+            const partes = dataIso.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
+        function aplicarFiltros() {
+            const fResp = selectRespFiltro.value.toLowerCase();
+            const fFase = document.getElementById('filtroFase').value.toLowerCase();
+            const fPrazo = document.getElementById('filtroPrazo').value;
+            const fEnvio = document.getElementById('filtroEnvio').value.toLowerCase();
+            const fGeral = document.getElementById('filtroGeral').value.toLowerCase();
+
+            const filtrados = requerimentos.filter(req => {
+                let ok = true;
+                if(fResp && (!req.responsavel || req.responsavel.toLowerCase() !== fResp)) ok = false;
+                if(fFase && !req.fase.toLowerCase().includes(fFase)) ok = false;
+                if(fPrazo && req.dataPrazo !== fPrazo) ok = false;
+                if(fEnvio && req.meioEnvio.toLowerCase() !== fEnvio) ok = false;
+                if(fGeral) {
+                    const textoGeral = `${req.numero} ${req.cliente} ${req.fase} ${req.info || ''}`.toLowerCase();
+                    if(!textoGeral.includes(fGeral)) ok = false;
+                }
+                return ok;
+            });
+
+            renderizarTabela(filtrados);
+        }
+
+        function renderizarTabela(dados) {
+            tabela.innerHTML = '';
+            document.getElementById('contador').textContent = dados.length;
+            const vazio = document.getElementById('estadoVazio');
+
+            if(dados.length === 0) {
+                vazio.classList.remove('hidden');
+                vazio.classList.add('flex');
+                return;
+            } else {
+                vazio.classList.add('hidden');
+                vazio.classList.remove('flex');
+            }
+
+            // Ordena por data de prazo (crescente)
+            dados.sort((a,b) => new Date(a.dataPrazo) - new Date(b.dataPrazo));
+
+            dados.forEach(req => {
+                // Badges Ação
+                let htmlAcao = '';
+                if(req.acaoAjuizada) htmlAcao += `<span class="inline-flex bg-purple-100 text-purple-700 text-xs px-2 py-0.5 rounded border border-purple-200">Ajuizada</span> `;
+                else if(req.aptoAcao) htmlAcao += `<span class="inline-flex bg-emerald-100 text-emerald-700 text-xs px-2 py-0.5 rounded border border-emerald-200">Apto p/ Ação</span> `;
+                else htmlAcao += `<span class="inline-flex bg-slate-100 text-slate-500 text-xs px-2 py-0.5 rounded border border-slate-200">Não Apto</span> `;
+
+                // Badges Status Adm
+                let htmlStatus = '';
+                if(req.prorrogado) htmlStatus += `<span class="inline-flex bg-amber-100 text-amber-700 text-[11px] px-1.5 py-0.5 rounded font-medium mb-1">Prorrogado</span><br>`;
+                if(req.diligenciado) htmlStatus += `<span class="inline-flex bg-blue-100 text-blue-700 text-[11px] px-1.5 py-0.5 rounded font-medium mb-1">Em Diligência</span><br>`;
+                
+                if(req.temInfo) {
+                    htmlStatus += `<div class="mt-1 text-[11px] bg-slate-50 border border-slate-200 p-1.5 rounded max-w-[150px] truncate" title="${req.info}"><span class="font-bold">Info:</span> ${req.info}</div>`;
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors group";
+                tr.innerHTML = `
+                    <td class="p-4 align-top">
+                        <div class="font-semibold text-slate-900">${req.numero}</div>
+                        <div class="text-sm text-slate-500">${req.cliente}</div>
+                    </td>
+                    <td class="p-4 align-top">
+                        <div class="font-medium text-slate-800">${req.fase}</div>
+                        <div class="text-[11px] mt-1 text-slate-500 uppercase tracking-wide">${req.meioEnvio} &bull; ${req.responsavel || 'Sem Resp.'}</div>
+                    </td>
+                    <td class="p-4 align-top">
+                        <div class="text-sm"><span class="text-slate-400">Prot:</span> ${formatarDataBR(req.dataProtocolo)}</div>
+                        <div class="text-sm font-medium text-red-600"><span class="text-slate-400">Prazo:</span> ${formatarDataBR(req.dataPrazo)}</div>
+                    </td>
+                    <td class="p-4 align-top">
+                        ${htmlAcao}
+                    </td>
+                    <td class="p-4 align-top leading-tight">
+                        ${htmlStatus || '<span class="text-xs text-slate-400">-</span>'}
+                    </td>
+                    <td class="p-4 align-top text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editarReq('${req.id}')" class="p-1.5 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md transition-colors" title="Editar">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                            </button>
+                            <button onclick="abrirModalDel('${req.id}')" class="p-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-md transition-colors" title="Excluir">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tabela.appendChild(tr);
+            });
+        }
+
+        // Run
+        init();
+    </script>
+</body>
+</html>
